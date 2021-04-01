@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 env:
-  IMAGE_TAG: engel-b/openhab:latest-alpine
+  IMAGE_TAG: engelb/openhab:latest-alpine
   
 jobs:
 
