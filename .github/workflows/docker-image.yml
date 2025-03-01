@@ -2,13 +2,13 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 env:
   IMAGE_TAG: engelb/openhab:latest-alpine
-  
+
 jobs:
 
   build:
@@ -16,15 +16,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag $IMAGE_TAG
+    - name: Checkout
+      uses: actions/checkout@v4
 
-    - name: Login to Docker Hub
-      uses: docker/login-action@v1
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
       with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        username: ${{ secrets.DOCKER_HUB_USER }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-    - name: Push image
-      run: docker push $IMAGE_TAG
+    - name: Set Version Tag with Timestamp
+      run: echo "VERSION_TAG=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }} .
+        docker push ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }}
+
+    - name: Also Push "latest" Tag
+      run: |
+        docker tag ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }} ${{ env.IMAGE_TAG }}:latest
+        docker push ${{ env.IMAGE_TAG }}:latest
