@@ -25,15 +25,7 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USER }}
         password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
-    - name: Set Version Tag with Timestamp
-      run: echo "VERSION_TAG=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
-
     - name: Build and Push Docker Image
       run: |
-        docker build -t ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }} .
-        docker push ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }}
-
-    - name: Also Push "latest" Tag
-      run: |
-        docker tag ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }} ${{ env.IMAGE_TAG }}:latest
+        docker build -t ${{ env.IMAGE_TAG }}:latest-alpine
         docker push ${{ env.IMAGE_TAG }}:latest-alpine
