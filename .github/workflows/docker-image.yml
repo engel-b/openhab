@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  IMAGE_TAG: engelb/openhab:latest-alpine
+  IMAGE_TAG: engelb/openhab
 
 jobs:
 
@@ -30,10 +30,10 @@ jobs:
 
     - name: Build and Push Docker Image
       run: |
-        docker build -t $IMAGE_TAG:${{ env.VERSION_TAG }} .
-        docker push $IMAGE_TAG:${{ env.VERSION_TAG }}
+        docker build -t ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }} .
+        docker push ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }}
 
     - name: Also Push "latest" Tag
       run: |
         docker tag ${{ env.IMAGE_TAG }}:${{ env.VERSION_TAG }} ${{ env.IMAGE_TAG }}:latest
-        docker push ${{ env.IMAGE_TAG }}:latest
+        docker push ${{ env.IMAGE_TAG }}:latest-alpine
